@@ -2,7 +2,9 @@ import pygame
 import pygwidgets
 from abc import ABC, abstractmethod
 
+
 # Abstract Classes
+WINDOW_HEIGHT = 600
 
 class Paddle(ABC): #abstract class for the paddles. To be used for the player and AI paddles
     def __init__(self, window, x, y, width, height, color):
@@ -22,8 +24,21 @@ class Paddle(ABC): #abstract class for the paddles. To be used for the player an
     def handle_event(self, event): #handles user input
         pass
     
+    def collide_event_handler(self, event): #handles collisions
+        steps = 10
+        step_dy = 5/steps
+        
+        for i in range(steps):
+            self.y += step_dy
+            self.rect.y = self.y
+            
+            # check for window collision
+            if self.y <= 0 or self.y + self.height >= WINDOW_HEIGHT:
+                break
+
     def draw(self): #draws the paddle
         pygame.draw.rect(self.window, self.color, self.rect)
+
 
 class Ball(ABC): #abstract class for the ball types
     def __init__(self, window, x, y, radius, color):

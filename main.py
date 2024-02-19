@@ -1,7 +1,7 @@
 import pygame
 import math
 import pygwidgets
-from classes import Paddle, Ball
+from classes import *
 from abc import ABC, abstractmethod
 
 # Create Display Window
@@ -82,26 +82,42 @@ class regularBall(Ball):
         self.rect = pygame.Rect(x, y, radius, radius)
         
     def move(self): #moves the ball
-        self.x += self.dx
-        self.y += self.dy
-        # update rect
-        self.rect.x = self.x
-        self.rect.y = self.y
+        steps = 10
+        step_dx = self.dx / steps
+        step_dy = self.dy / steps
         
+        for i in range(steps):
+            # move ball one step forward
+            self.x += step_dx
+            self.y += step_dy
+            
+            # check for collision with walls
+            if self.check_collision():
+                break
+            
+    def check_collision(self): #checks for collision with walls
         if self.y <= 0 or self.y >= WINDOW_HEIGHT:
             self.dy *= -1
-        if self.x <= 0:
+            return True
+        if self.x <= 0 or self.x >= WINDOW_WIDTH:
             self.dx *= -1
-        
+            return True
+        if player_paddle.rect.collidepoint(self.x, self.y):
+            self.dx *= -1  # Reverse horizontal direction
+            self.x = player_paddle.rect.right + self.radius  # Move the ball outside the paddle
+            return True
+        if RightWall.rect.collidepoint(self.x, self.y):
+            self.dx *= -1
+            self.x = RightWall.rect.left - self.radius
+        return False
+    
     def handle_event(self, event): #handle collisions
-        if self.rect.colliderect(player_paddle.rect) or self.rect.colliderect(GiantRightWall.rect):
-            self.dx *= -1
-            print("Collision detected")
-
+        pass
+    
 # Game Elements
 player_paddle = PlayerPaddle(window, 50, 50, 20, 100, (0, 0, 0))
 ball = regularBall(window, 400, 300, 10, (0, 0, 0))
-GiantRightWall = GiantRightWall(window, 750, 0, 50, 600, (0, 0, 0))
+RightWall = GiantRightWall(window, 750, 0, 50, 600, (0, 0, 0))
 
 # Game Loop
 run = True
@@ -129,9 +145,10 @@ while run:
         exit_button.draw()
         
         player_paddle.move()
+        
         player_paddle.draw()
         
-        GiantRightWall.draw()
+        RightWall.draw()
         
         ball.move()
         ball.draw()
