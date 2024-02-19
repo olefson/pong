@@ -23,10 +23,12 @@ menu_state = main_menu
 P1_score = 0
 P2_score = 0
 
+# Text
+title = pygwidgets.DisplayText(window, (265, 200), "PONG", fontSize=120, textColor=("white"))
 
 # Buttons
-start_button = pygwidgets.TextButton(window, (WINDOW_WIDTH / 2 - 100, 100), "Start Game")
-exit_button = pygwidgets.TextButton(window, (WINDOW_WIDTH / 2 - 100, 200), "Exit Game")
+start_button = pygwidgets.TextButton(window, (290, 380), "Start Game", width=200, height=50, fontSize=36)
+exit_button = pygwidgets.TextButton(window, (290, 450), "Exit", width=200, height=50, fontSize=36)
 
 # Game classes
 class PlayerPaddle(Paddle):
@@ -124,29 +126,29 @@ class regularBall(Ball):
 
 
 # Game Elements
-player_paddle = PlayerPaddle(window, 50, 50, 20, 100, (0, 0, 0))
-ball = regularBall(window, 400, 300, 10, (0, 0, 0))
+player_paddle = PlayerPaddle(window, 50, 50, 20, 100, ("white"))
+ball = regularBall(window, 400, 300, 10, ("grey"))
+ball.dy = -5
 computer_paddle = ComputerPaddle(window, 730, 50, 20, 100, ("blue"))
 # RightWall = GiantRightWall(window, 700, 0, 50, 600, (0, 0, 0))
-LeftGoal = Goal(window, 0, 0, 50, 600, ("red"))
-RightGoal = Goal(window, 750, 0, 50, 600, ("red"))
-P1ScoreDisplay = pygwidgets.DisplayText(window, (WINDOW_WIDTH / 2 - 100, 50), "Player 1: " + str(P1_score))
-P2ScoreDisplay = pygwidgets.DisplayText(window, (WINDOW_WIDTH / 2 + 100, 50), "Player 2: " + str(P2_score))
-
+LeftGoal = Goal(window, 0, 0, 50, 600, ("black"))
+RightGoal = Goal(window, 750, 0, 50, 600, ("black"))
+P1ScoreDisplay = pygwidgets.DisplayText(window, (150, 50), "Player 1: " + str(P1_score), textColor=("white"), fontSize=36)
+P2ScoreDisplay = pygwidgets.DisplayText(window, (500, 50), "Player 2: " + str(P2_score), textColor=("white"), fontSize=36)
 
 
 # Game Loop
 run = True
 
 while run:
-    window.fill((255, 255, 255))
+    window.fill(("black"))
     timer.tick(fps)
     
     # Main Menu
     if menu_state == main_menu:
-        title = font.render("Main Menu", True, (0, 0, 0))
-        window.blit(title, (WINDOW_WIDTH / 2 - title.get_width() / 2, 20))
+        title.draw()
         start_button.draw()
+        exit_button.draw()
     
         # Main Menu event handling
         for event in pygame.event.get():
@@ -154,11 +156,12 @@ while run:
                 run = False
             if start_button.handleEvent(event):
                 menu_state = game
+            if exit_button.handleEvent(event):
+                run = False
        
     if menu_state == game:
         title = font.render("Game", True, (0, 0, 0))
         window.blit(title, (WINDOW_WIDTH / 2 - title.get_width() / 2, 20))
-        exit_button.draw()
         
         player_paddle.move()
         player_paddle.draw()
@@ -173,13 +176,26 @@ while run:
         ball.draw()
         P1ScoreDisplay.draw()
         P2ScoreDisplay.draw()
+        if P1_score >= 5 or P2_score >= 5:
+            menu_state = game_over
+
         # Game event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            ball.handle_event(event)
+            
+    
+    if menu_state == game_over:
+        title = font.render("Game Over", True, ("white"))
+        window.blit(title, (WINDOW_WIDTH / 2 - title.get_width() / 2, 20))
+        exit_button.draw()
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if exit_button.handleEvent(event):
                 run = False
-            ball.handle_event(event)
                 
             
     pygame.display.update()
