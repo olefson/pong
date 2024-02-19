@@ -117,7 +117,9 @@ class regularBall(Ball):
 # Game Elements
 player_paddle = PlayerPaddle(window, 50, 50, 20, 100, (0, 0, 0))
 ball = regularBall(window, 400, 300, 10, (0, 0, 0))
-RightWall = GiantRightWall(window, 750, 0, 50, 600, (0, 0, 0))
+RightWall = GiantRightWall(window, 700, 0, 50, 600, (0, 0, 0))
+LeftGoal = Goal(window, 0, 0, 50, 600, ("red"))
+RightGoal = Goal(window, 750, 0, 50, 600, ("red"))
 
 # Game Loop
 run = True
@@ -149,7 +151,8 @@ while run:
         player_paddle.draw()
         
         RightWall.draw()
-        
+        LeftGoal.draw()
+        RightGoal.draw()
         ball.move()
         ball.draw()
         # Game event handling

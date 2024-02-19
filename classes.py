@@ -61,4 +61,20 @@ class Ball(ABC): #abstract class for the ball types
     
     def draw(self): #draws the ball
         pygame.draw.circle(self.window, self.color, (self.x, self.y), self.radius)
+
+# Regular class for goal
+class Goal():
+    def __init__(self, window, x, y, width, height, color):
+        self.window = window
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.color = color
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         
+    def draw(self):
+        pygame.draw.rect(self.window, self.color, self.rect)
+        
+    def handle_event(self, event):
+        pass
