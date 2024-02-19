@@ -19,28 +19,6 @@ game = "game"
 game_over = "game_over"
 menu_state = main_menu
 
-# Abstract Classes
-class Ball(ABC): #abstract class for the ball types
-    def __init__(self, window, x, y, radius, color):
-        self.window = window
-        self.x = x
-        self.y = y
-        self.radius = radius
-        self.color = color
-        self.rect = pygame.Rect(self.x, self.y, self.radius, self.radius)
-        self.dx = 5
-        self.dy = 5
-        
-    @abstractmethod
-    def move(self): #moves the ball
-        pass
-    
-    @abstractmethod
-    def handle_event(self, event): #handle collisions
-        pass
-    
-    def draw(self): #draws the ball
-        pygame.draw.circle(self.window, self.color, (self.x, self.y), self.radius)
 
 # Buttons
 start_button = pygwidgets.TextButton(window, (WINDOW_WIDTH / 2 - 100, 100), "Start Game")
@@ -114,12 +92,20 @@ class regularBall(Ball):
     def handle_event(self, event): #handle collisions
         pass
     
+# Trackers
+P1_score = 0
+P2_score = 0
+
 # Game Elements
 player_paddle = PlayerPaddle(window, 50, 50, 20, 100, (0, 0, 0))
 ball = regularBall(window, 400, 300, 10, (0, 0, 0))
 RightWall = GiantRightWall(window, 700, 0, 50, 600, (0, 0, 0))
 LeftGoal = Goal(window, 0, 0, 50, 600, ("red"))
 RightGoal = Goal(window, 750, 0, 50, 600, ("red"))
+P1ScoreDisplay = pygwidgets.DisplayText(window, (WINDOW_WIDTH / 2 - 100, 50), "Player 1: " + str(P1_score))
+P2ScoreDisplay = pygwidgets.DisplayText(window, (WINDOW_WIDTH / 2 + 100, 50), "Player 2: " + str(P2_score))
+
+
 
 # Game Loop
 run = True
@@ -155,6 +141,8 @@ while run:
         RightGoal.draw()
         ball.move()
         ball.draw()
+        P1ScoreDisplay.draw()
+        P2ScoreDisplay.draw()
         # Game event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
