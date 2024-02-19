@@ -47,13 +47,25 @@ class PlayerPaddle(Paddle):
     def handle_event(self, event):
         pass
 
-class GiantRightWall(Paddle): #A giant wall the ball bounces off for testing purposes before AI paddle is implemented
+class ComputerPaddle(Paddle):
     def __init__(self, window, x, y, width, height, color):
         super().__init__(window, x, y, width, height, color)
         self.rect = pygame.Rect(x, y, width, height)
-    
-    def move(self):
-        pass
+        
+    def move(self, ball_y): #moves up and down the screen based on ball position
+        if self.rect.centery < ball_y:
+            self.y += 5
+        elif self.rect.centery > ball_y:
+            self.y -= 5
+        
+        # add boundry checking
+        if self.y < 0:
+            self.y = 0
+        elif self.y > WINDOW_HEIGHT - self.height:
+            self.y = WINDOW_HEIGHT - self.height
+            
+        # update rect
+        self.rect.y = self.y
     
     def handle_event(self, event):
         pass
@@ -89,9 +101,9 @@ class regularBall(Ball):
             self.dx *= -1  # Reverse horizontal direction
             self.x = player_paddle.rect.right + self.radius  # Move the ball outside the paddle
             return True
-        if RightWall.rect.collidepoint(self.x, self.y):
+        if computer_paddle.rect.collidepoint(self.x, self.y):
             self.dx *= -1
-            self.x = RightWall.rect.left - self.radius
+            self.x = computer_paddle.rect.left - self.radius
         if LeftGoal.rect.collidepoint(self.x, self.y):
             P2_score += 1
             P2ScoreDisplay.setValue("Player 2: " + str(P2_score))
@@ -114,7 +126,8 @@ class regularBall(Ball):
 # Game Elements
 player_paddle = PlayerPaddle(window, 50, 50, 20, 100, (0, 0, 0))
 ball = regularBall(window, 400, 300, 10, (0, 0, 0))
-RightWall = GiantRightWall(window, 700, 0, 50, 600, (0, 0, 0))
+computer_paddle = ComputerPaddle(window, 730, 50, 20, 100, ("blue"))
+# RightWall = GiantRightWall(window, 700, 0, 50, 600, (0, 0, 0))
 LeftGoal = Goal(window, 0, 0, 50, 600, ("red"))
 RightGoal = Goal(window, 750, 0, 50, 600, ("red"))
 P1ScoreDisplay = pygwidgets.DisplayText(window, (WINDOW_WIDTH / 2 - 100, 50), "Player 1: " + str(P1_score))
@@ -148,12 +161,14 @@ while run:
         exit_button.draw()
         
         player_paddle.move()
-        
         player_paddle.draw()
         
-        RightWall.draw()
+        computer_paddle.move(ball.y)
+        computer_paddle.draw()
+        
         LeftGoal.draw()
         RightGoal.draw()
+        
         ball.move()
         ball.draw()
         P1ScoreDisplay.draw()
