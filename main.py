@@ -19,6 +19,10 @@ game = "game"
 game_over = "game_over"
 menu_state = main_menu
 
+# Trackers
+P1_score = 0
+P2_score = 0
+
 
 # Buttons
 start_button = pygwidgets.TextButton(window, (WINDOW_WIDTH / 2 - 100, 100), "Start Game")
@@ -74,6 +78,7 @@ class regularBall(Ball):
                 break
             
     def check_collision(self): #checks for collision with walls
+        global P1_score, P2_score #global variables for score
         if self.y <= 0 or self.y >= WINDOW_HEIGHT:
             self.dy *= -1
             return True
@@ -87,14 +92,24 @@ class regularBall(Ball):
         if RightWall.rect.collidepoint(self.x, self.y):
             self.dx *= -1
             self.x = RightWall.rect.left - self.radius
+        if LeftGoal.rect.collidepoint(self.x, self.y):
+            P2_score += 1
+            P2ScoreDisplay.setValue("Player 2: " + str(P2_score))
+            self.x = WINDOW_WIDTH / 2
+            self.y = WINDOW_HEIGHT / 2
+            return False
+        if RightGoal.rect.collidepoint(self.x, self.y):
+            P1_score += 1
+            P1ScoreDisplay.setValue("Player 1: " + str(P1_score))
+            self.x = WINDOW_WIDTH / 2
+            self.y = WINDOW_HEIGHT / 2
+            return False
         return False
     
     def handle_event(self, event): #handle collisions
         pass
     
-# Trackers
-P1_score = 0
-P2_score = 0
+
 
 # Game Elements
 player_paddle = PlayerPaddle(window, 50, 50, 20, 100, (0, 0, 0))
