@@ -18,6 +18,7 @@ font = pygame.font.Font(None, 36)
 main_menu = "main"
 game = "game"
 game_over = "game_over"
+name_input = "name_input"
 menu_state = main_menu
 
 # Trackers
@@ -28,9 +29,13 @@ ball_started = False
 # Text
 title = pygwidgets.DisplayText(window, (265, 200), "PONG", fontSize=120, textColor=("white"))
 
+# Input text
+input_name = pygwidgets.InputText(window, (290, 380), value = "Enter Name: ", fontSize=36, width=200, textColor="red")
+
 # Buttons
 start_button = pygwidgets.TextButton(window, (290, 380), "Start Game", width=200, height=50, fontSize=36)
 exit_button = pygwidgets.TextButton(window, (290, 450), "Exit", width=200, height=50, fontSize=36)
+begin_button = pygwidgets.TextButton(window, (290, 450), "Begin", width=200, height=50, fontSize=36)
 
 # Game classes
 class PlayerPaddle(Paddle):
@@ -142,10 +147,11 @@ player_paddle = PlayerPaddle(window, 50, 50, 20, 100, ("white"))
 ball = regularBall(window, 400, 300, 10, ("grey"))
 ball.dy = 2
 ball.dx = -5
+player_1_name = "Player 1"
 computer_paddle = ComputerPaddle(window, 730, 50, 20, 100, ("blue"))
 LeftGoal = Goal(window, 0, 0, 50, 600, ("black"))
 RightGoal = Goal(window, 750, 0, 50, 600, ("black"))
-P1ScoreDisplay = pygwidgets.DisplayText(window, (150, 50), "Player 1: " + str(P1_score), textColor=("white"), fontSize=36)
+P1ScoreDisplay = pygwidgets.DisplayText(window, (150, 50), player_1_name + ": " + str(P1_score), textColor=("white"), fontSize=36)
 P2ScoreDisplay = pygwidgets.DisplayText(window, (500, 50), "Player 2: " + str(P2_score), textColor=("white"), fontSize=36)
 
 
@@ -167,9 +173,22 @@ while run:
             if event.type == pygame.QUIT:
                 run = False
             if start_button.handleEvent(event):
-                menu_state = game
+                menu_state = name_input
             if exit_button.handleEvent(event):
                 run = False
+    
+    if menu_state == name_input:
+        input_name.draw()
+        begin_button.draw()
+        
+        for event in pygame.event.get():
+            input_name.handleEvent(event)
+            player_1_name = input_name.getValue()
+            P1ScoreDisplay.setValue(player_1_name + ": " + str(P1_score))
+            if begin_button.handleEvent(event):
+                menu_state = game
+                
+                
        
     if menu_state == game:
         title = font.render("Game", True, (0, 0, 0))
