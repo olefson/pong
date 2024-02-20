@@ -3,6 +3,7 @@ import math
 import pygwidgets
 from classes import *
 from abc import ABC, abstractmethod
+import random
 
 # Create Display Window
 WINDOW_HEIGHT = 600
@@ -61,9 +62,10 @@ class ComputerPaddle(Paddle):
         self.rect = pygame.Rect(x, y, width, height)
         
     def move(self, ball_y): #moves up and down the screen based on ball position
-        if self.rect.centery < ball_y:
+        guessY = ball_y + (-1 if random.random() <= 0.5 else 1) * random.random() * 150
+        if self.rect.centery < guessY:
             self.y += 5
-        elif self.rect.centery > ball_y:
+        elif self.rect.centery > guessY:
             self.y -= 5
         
         # add boundry checking
@@ -71,7 +73,8 @@ class ComputerPaddle(Paddle):
             self.y = 0
         elif self.y > WINDOW_HEIGHT - self.height:
             self.y = WINDOW_HEIGHT - self.height
-            
+        
+        
         # update rect
         self.rect.y = self.y
     
@@ -107,8 +110,8 @@ class regularBall(Ball):
             self.dx *= -1
             return True
         if player_paddle.rect.collidepoint(self.x, self.y):
-            self.dx *= -1  # Reverse horizontal direction
-            self.x = player_paddle.rect.right + self.radius  # Move the ball outside the paddle
+            self.dx *= -1  # reverse horizontal direction
+            self.x = player_paddle.rect.right + self.radius  # move ball outside the paddle
             return True
         if computer_paddle.rect.collidepoint(self.x, self.y):
             self.dx *= -1
@@ -137,10 +140,9 @@ class regularBall(Ball):
 # Game Elements
 player_paddle = PlayerPaddle(window, 50, 50, 20, 100, ("white"))
 ball = regularBall(window, 400, 300, 10, ("grey"))
-ball.dy = 0
+ball.dy = 2
 ball.dx = -5
 computer_paddle = ComputerPaddle(window, 730, 50, 20, 100, ("blue"))
-# RightWall = GiantRightWall(window, 700, 0, 50, 600, (0, 0, 0))
 LeftGoal = Goal(window, 0, 0, 50, 600, ("black"))
 RightGoal = Goal(window, 750, 0, 50, 600, ("black"))
 P1ScoreDisplay = pygwidgets.DisplayText(window, (150, 50), "Player 1: " + str(P1_score), textColor=("white"), fontSize=36)
