@@ -25,6 +25,7 @@ menu_state = main_menu
 P1_score = 0
 P2_score = 0
 ball_started = False
+p1_name = "Player 1"
 
 # Text
 title = pygwidgets.DisplayText(window, (265, 200), "PONG", fontSize=120, textColor=("white"))
@@ -130,7 +131,7 @@ class regularBall(Ball):
             return False
         if RightGoal.rect.collidepoint(self.x, self.y):
             P1_score += 1
-            P1ScoreDisplay.setValue("Player 1: " + str(P1_score))
+            P1ScoreDisplay.setValue(p1_name + ": " + str(P1_score))
             self.x = WINDOW_WIDTH / 2
             self.y = WINDOW_HEIGHT / 2
             ball_started = False
@@ -184,7 +185,8 @@ while run:
         for event in pygame.event.get():
             input_name.handleEvent(event)
             player_1_name = input_name.getValue()
-            P1ScoreDisplay.setValue(player_1_name + ": " + str(P1_score))
+            p1_name = player_1_name
+            P1ScoreDisplay.setValue(p1_name + ": " + str(P1_score))
             if begin_button.handleEvent(event):
                 menu_state = game
                 
